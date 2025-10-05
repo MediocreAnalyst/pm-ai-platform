@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import RecommendationDisplay from './RecommendationDisplay';
 
 export default function AssessmentForm() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,11 +32,25 @@ export default function AssessmentForm() {
       }
 
       setResult(data.recommendation);
+      
+      // Save assessment to localStorage for templates
+      localStorage.setItem('current-assessment', JSON.stringify({
+        projectDescription,
+        recommendation: data.recommendation,
+        timestamp: Date.now()
+      }));
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleReset = () => {
+    setIsOpen(false);
+    setProjectDescription('');
+    setResult(null);
+    setError(null);
   };
 
   if (!isOpen) {
@@ -51,46 +66,43 @@ export default function AssessmentForm() {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Describe your project (500 characters max)
-          </label>
-          <textarea
-            value={projectDescription}
-            onChange={(e) => setProjectDescription(e.target.value.slice(0, 500))}
-            placeholder="Example: Building a mobile app for a food delivery service. Team of 5 developers, 3-month timeline, need to integrate with existing restaurant POS systems..."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            rows="6"
-            required
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            {projectDescription.length}/500 characters
-          </p>
-        </div>
+      {!result && (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Describe your project (500 characters max)
+            </label>
+            <textarea
+              value={projectDescription}
+              onChange={(e) => setProjectDescription(e.target.value.slice(0, 500))}
+              placeholder="Example: Building a mobile app for a food delivery service. Team of 5 developers, 3-month timeline, need to integrate with existing restaurant POS systems..."
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              rows="6"
+              required
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              {projectDescription.length}/500 characters
+            </p>
+          </div>
 
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            disabled={isLoading || projectDescription.length < 20}
-            className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Analyzing...' : 'Get Recommendations'}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setIsOpen(false);
-              setProjectDescription('');
-              setResult(null);
-              setError(null);
-            }}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              disabled={isLoading || projectDescription.length < 20}
+              className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Analyzing...' : 'Get Recommendations'}
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -99,12 +111,18 @@ export default function AssessmentForm() {
       )}
 
       {result && (
-        <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-green-900">
-            AI Recommendations:
-          </h3>
-          <div className="text-gray-800 whitespace-pre-wrap">
-            {result}
+        <div className="bg-white p-6 rounded-lg border-2 border-indigo-200">
+          <RecommendationDisplay 
+            recommendation={result} 
+            projectDescription={projectDescription}
+          />
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <button
+              onClick={handleReset}
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold"
+            >
+              ← New Assessment
+            </button>
           </div>
         </div>
       )}

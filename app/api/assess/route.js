@@ -17,17 +17,39 @@ export async function POST(request) {
 
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
+      max_tokens: 1200,
       messages: [{
         role: 'user',
-        content: `You are a project management expert. Analyze this project description and provide:
+        content: `You are a project management expert. Analyze this project description and provide recommendations in EXACTLY this format:
 
-1. Recommended PM approach (Waterfall, Agile, Hybrid)
-2. Key templates needed (Project Plan, Kanban, RAID Log, etc.)
-3. Critical success factors
-4. Potential risks to watch for
+## Recommended PM Approach
+[Your recommendation with rationale]
 
-Keep your response concise and actionable (under 400 words).
+## Key Templates Needed
+- Template 1: Description
+- Template 2: Description
+[etc.]
+
+## Critical Success Factors
+- Factor 1
+- Factor 2
+[etc.]
+
+## Potential Risks
+- Risk 1
+- Risk 2
+[etc.]
+
+## Rough Estimates
+- Estimated Timeline: [range with caveats]
+- Estimated Budget Range: [range or complexity indicator]
+- Team Size: [recommended size]
+- Complexity Level: [Low/Medium/High with brief explanation]
+
+## Quick Implementation Tip
+[Actionable first step]
+
+IMPORTANT: For estimates, provide ranges and emphasize these are rough approximations that may vary significantly. Keep your entire response concise (under 500 words).
 
 Project Description:
 ${description}`
