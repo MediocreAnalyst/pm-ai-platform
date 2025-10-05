@@ -1,3 +1,5 @@
+import AssessmentForm from './components/AssessmentForm';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -41,7 +43,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* CTA Section */}
+        {/* CTA Section with Working Form */}
         <div className="bg-white p-8 rounded-lg shadow-lg text-center">
           <h2 className="text-2xl font-bold mb-4">
             Get AI-Powered Project Recommendations
@@ -50,9 +52,7 @@ export default function Home() {
             Describe your project and get instant recommendations on process, 
             templates, and documentation needs.
           </p>
-          <button className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
-            Try Free Assessment →
-          </button>
+          <AssessmentForm />
           <p className="text-sm text-gray-500 mt-4">
             No credit card required • See results in seconds
           </p>
